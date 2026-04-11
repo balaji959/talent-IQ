@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(frontendPath));
 
   // SPA fallback - must be after all API routes
-  app.get('*', (req, res) => {
+ app.get('/{*path}', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 }
