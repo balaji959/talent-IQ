@@ -3,19 +3,22 @@ import express from 'express';
 import path from 'path';
 import { ENV } from './lib/env.js';
 const app = express(); 
-// ... top of your code ...
-const __dirname = path.resolve(); 
+// ... top of your code ... 
 
 // ... routes ...
 
+const __dirname = path.resolve(); // gives /opt/render/project/src/backend
+
 if (ENV.NODE_ENV === 'production' || process.env.NODE_ENV === 'production') {
-  const frontendPath = path.join(__dirname, '..', 'frontend', 'dist');
+  const frontendPath = path.join(__dirname, '..', '..', 'frontend', 'dist');
+  //                                         ↑      ↑
+  //                              src/backend → src → project root
 
   console.log("Looking for frontend at:", frontendPath);
 
   app.use(express.static(frontendPath));
 
-  app.get('*', (req, res) => {
+  app.get('/{*path}', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 }
