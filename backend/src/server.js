@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ENV } from './lib/env.js';
+import { connect } from 'http2';
+import { connectDB } from './lib/db.js';
 const app = express();
 
 app.use(express.json());
@@ -48,6 +50,17 @@ app.use((err, req, res, next) => {
 
 const PORT = ENV.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ SERVER RUNNING AT: http://localhost:${PORT}`);
-  console.log(`Try health check at: http://localhost:${PORT}/health`);
+  console.log(`🚀 Server running on port:`, ENV.PORT);
+  connectDB();
 });
+
+const startServer = async () => {
+  try {
+    await connectDB();    
+    console.log(`🚀 Server running on port:`, ENV.PORT);
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+startServer();

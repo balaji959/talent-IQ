@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-dotenv.config(); // This loads the variables from your .env file
+dotenv.config({quiet: true}); // This loads the variables from your .env file
 
 export const ENV = {
   PORT: process.env.PORT || 3000, // Fallback to 3000 if PORT is missing
