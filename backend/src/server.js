@@ -9,9 +9,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // __dirname = /opt/render/project/src/backend/src
 
-if (ENV.NODE_ENV === 'production') {
-  const frontendPath = path.join(__dirname, '..', '..', '..', '..', 'frontend', 'dist');
-  // src → backend → src → project = /opt/render/project/src/frontend/dist
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = process.env.RENDER 
+    ? '/opt/render/project/src/frontend/dist'
+    : path.join(__dirname, '..', '..', '..', 'frontend', 'dist');
 
   console.log("Looking for frontend at:", frontendPath);
 
