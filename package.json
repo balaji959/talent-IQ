@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/balaji959/talent-IQ/issues"
   },
-  "homepage": "https://github.com/balaji959/talent-IQ#readme"
+  "homepage": "https://github.com/balaji959/talent-IQ#readme",
+  "dependencies": {
+    "@clerk/clerk-react": "^5.61.3"
+  }
 }

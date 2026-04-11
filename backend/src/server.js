@@ -49,18 +49,18 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = ENV.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port:`, ENV.PORT);
-  connectDB();
-});
 
 const startServer = async () => {
   try {
-    await connectDB();    
-    console.log(`🚀 Server running on port:`, ENV.PORT);
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`✅ SERVER RUNNING AT: http://localhost:${PORT}`);
+      console.log(`Try health check at: http://localhost:${PORT}/health`);
+    });
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
   }
 }
+
 startServer();
