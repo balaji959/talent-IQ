@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // __dirname = /opt/render/project/src/backend/src
 
-if (ENV.NODE_ENV === 'production' || process.env.NODE_ENV === 'production') {
+if (ENV.NODE_ENV === 'production') {
   const frontendPath = path.join(__dirname, '..', '..', '..', '..', 'frontend', 'dist');
   // src → backend → src → project = /opt/render/project/src/frontend/dist
 
