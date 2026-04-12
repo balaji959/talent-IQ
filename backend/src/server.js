@@ -4,6 +4,10 @@ import { fileURLToPath } from 'url';
 import { ENV } from './lib/env.js';
 import { connect } from 'http2';
 import { connectDB } from './lib/db.js';
+import { ClientRequest, Server } from 'http';
+import cors from 'cors';
+import { server } from 'inngest/express';
+import { functions, inngest, Inngest } from './lib/inngest.js';
 const app = express();
 
 app.use(express.json());
@@ -13,10 +17,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // __dirname = /opt/render/project/src/backend/src
 
+//middleware
+app.use(express.json());
+//credentials: true allows cookies to be sent in cross-origin requests, which is necessary for authentication and session management when the frontend and backend are on different domains or ports.
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
+
+
+
 // Middleware
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/inngest", Server({client: inngest, functions}));
 // API Routes
 app.get("/health", (req, res) => {
   res.status(200).json({ message: 'Server is healthy' });
