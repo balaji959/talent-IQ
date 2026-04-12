@@ -5,7 +5,7 @@ const secretapi = ENV.STREAM_SECRET_KEY;
 if (!apikey || !secretapi) {
   throw new Error("STREAM_API_KEY and STREAM_SECRET_KEY are required");
 }
-export const client = StreamChat(apikey, secretapi);
+export const client = new StreamChat(apikey, secretapi);
 export const upsertStreamUser = async (userData) => {
     try { 
         await client.upsertUser(userData);
