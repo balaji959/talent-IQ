@@ -8,7 +8,18 @@ import cors from 'cors';
 import { inngest, functions } from './lib/inngest.js';
 import { Webhook } from 'svix';
 
-app.post('/api/clerk/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Middleware
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Clerk webhook - must use raw body
+app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
   let evt;
   try {
@@ -16,36 +27,18 @@ app.post('/api/clerk/webhook', express.raw({type: 'application/json'}), async (r
   } catch (err) {
     return res.status(400).json({ error: 'Invalid webhook' });
   }
-  
+
   await inngest.send({
     name: `clerk.${evt.type}`,
     data: evt.data
   });
-  
+
   res.json({ received: true });
 });
-const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Inngest
+app.use("/api/inngest", Server({ client: inngest, functions }));
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-// __dirname = /opt/render/project/src/backend/src
-
-//middleware
-app.use(express.json());
-//credentials: true allows cookies to be sent in cross-origin requests, which is necessary for authentication and session management when the frontend and backend are on different domains or ports.
-app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
-
-
-
-// Middleware
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use("/api/inngest", Server({client: inngest, functions}));
 // API Routes
 app.get("/health", (req, res) => {
   res.status(200).json({ message: 'Server is healthy' });
@@ -57,7 +50,7 @@ app.get("/books", (req, res) => {
 
 // Static files and SPA fallback (production only)
 if (process.env.NODE_ENV === 'production') {
-  const frontendPath = process.env.RENDER 
+  const frontendPath = process.env.RENDER
     ? '/opt/render/project/src/frontend/dist'
     : path.join(__dirname, '..', '..', '..', 'frontend', 'dist');
 
@@ -65,8 +58,7 @@ if (process.env.NODE_ENV === 'production') {
 
   app.use(express.static(frontendPath));
 
-  // SPA fallback - must be after all API routes
- app.get('/{*path}', (req, res) => {
+  app.get('/{*path}', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 }
