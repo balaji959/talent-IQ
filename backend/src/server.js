@@ -6,6 +6,24 @@ import { connectDB } from './lib/db.js';
 import { serve as Server } from 'inngest/express';
 import cors from 'cors';
 import { inngest, functions } from './lib/inngest.js';
+import { Webhook } from 'svix';
+
+app.post('/api/clerk/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+  const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
+  let evt;
+  try {
+    evt = wh.verify(req.body, req.headers);
+  } catch (err) {
+    return res.status(400).json({ error: 'Invalid webhook' });
+  }
+  
+  await inngest.send({
+    name: `clerk.${evt.type}`,
+    data: evt.data
+  });
+  
+  res.json({ received: true });
+});
 const app = express();
 
 app.use(express.json());
