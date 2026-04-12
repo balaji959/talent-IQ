@@ -25,13 +25,19 @@ app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), async 
   try {
     evt = wh.verify(req.body, req.headers);
   } catch (err) {
+    console.error('Webhook verify error:', err);
     return res.status(400).json({ error: 'Invalid webhook' });
   }
 
-  await inngest.send({
-    name: `clerk.${evt.type}`,
-    data: evt.data
-  });
+  try {
+    await inngest.send({
+      name: `clerk.${evt.type}`,
+      data: evt.data
+    });
+    console.log('Inngest event sent:', evt.type);
+  } catch (err) {
+    console.error('Inngest send error:', err);
+  }
 
   res.json({ received: true });
 });
