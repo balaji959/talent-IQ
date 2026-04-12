@@ -54,6 +54,10 @@ app.get("/books", (req, res) => {
   res.status(200).json({ message: 'this is the book endpoint' });
 });
 
+app.get("/video-calling", (req, res) => {
+  res.status(200).json({ message: 'this is the video calling endpoint' });
+});
+
 // Static files and SPA fallback (production only)
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = process.env.RENDER
