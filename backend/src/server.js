@@ -13,12 +13,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
-app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Clerk webhook - must use raw body
+// Clerk webhook MUST be before express.json()
 app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
   let evt;
@@ -41,6 +36,11 @@ app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), async 
 
   res.json({ received: true });
 });
+
+// Middleware AFTER webhook route
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Inngest
 app.use("/api/inngest", Server({ client: inngest, functions }));
