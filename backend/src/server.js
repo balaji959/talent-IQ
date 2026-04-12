@@ -4,10 +4,10 @@ import { fileURLToPath } from 'url';
 import { ENV } from './lib/env.js';
 import { connect } from 'http2';
 import { connectDB } from './lib/db.js';
-import { ClientRequest, Server } from 'http';
+import { serve as Server } from 'inngest/express';
 import cors from 'cors';
 import { server } from 'inngest/express';
-import { functions, inngest, Inngest } from './lib/inngest.js';
+import { functions, inngest } from './lib/inngest.js';
 const app = express();
 
 app.use(express.json());
