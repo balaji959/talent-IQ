@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({quiet: true}); // This loads the variables from your .env file
 
 export const ENV = {
-  PORT: process.env.PORT || 3000, // Fallback to 3000 if PORT is missing
+  PORT: process.env.PORT || 5173, // Fallback to 5173 if PORT is missing
   DB_URL: process.env.DB_URL,
   NODE_ENV: process.env.NODE_ENV || 'production',
   CLIENT_URL: process.env.CLIENT_URL,
