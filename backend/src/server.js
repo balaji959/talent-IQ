@@ -8,7 +8,8 @@ import cors from 'cors';
 import { inngest, functions } from './lib/inngest.js';
 import { Webhook } from 'svix';
 import { clerkMiddleware } from '@clerk/express';
-import { protectRoute } from './middleware/protectRoute.js';
+
+import chatRoutes from './routes/chatRoutes.js';
 
 console.log('CLERK KEY:', process.env.CLERK_PUBLISHABLE_KEY?.slice(0, 10));
 
@@ -46,18 +47,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(clerkMiddleware());
 
 app.use("/api/inngest", Server({ client: inngest, functions }));
+app.use("/api/chat", chatRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({ message: 'Server is healthy' });
 });
 
-app.get("/books", (req, res) => {
-  res.status(200).json({ message: 'this is the book endpoint' });
-});
-
-app.get("/video-calling", protectRoute, (req, res) => {
-  res.status(200).json({ message: 'this is the protected route' });
-});
 
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = process.env.RENDER

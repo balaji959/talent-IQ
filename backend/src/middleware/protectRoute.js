@@ -3,17 +3,17 @@ import user from '../models/user.js';
 
 export const protectRoute = [
     requireAuth(),
-    async (req, res, next) => {
+    async (req, res, next) => {s
         try {
             const clerkId = req.auth.userId;
             if (!clerkId) {
                 return res.status(401).json({ error: 'Unauthorized' });
             }
-            const foundUser = await user.findOne({ clerkId });
-            if (!foundUser) {
+            const user = await user.findOne({ clerkId });
+            if (!user) {
                 return res.status(401).json({ error: 'User not found' });
             }
-            req.user = foundUser;
+            req.user = user;
             next();
         } catch (err) {
             console.error('err in protectRoute middleware:', err);
