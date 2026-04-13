@@ -10,12 +10,13 @@ import { Webhook } from 'svix';
 import { clerkMiddleware } from '@clerk/express';
 import { protectRoute } from './middleware/protectRoute.js';
 
+console.log('CLERK KEY:', process.env.CLERK_PUBLISHABLE_KEY?.slice(0, 10));
+
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Clerk webhook MUST be before express.json()
 app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
   let evt;
@@ -39,16 +40,13 @@ app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), async 
   res.json({ received: true });
 });
 
-// Middleware AFTER webhook route
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(clerkMiddleware());
 
-// Inngest
 app.use("/api/inngest", Server({ client: inngest, functions }));
 
-// API Routes
 app.get("/health", (req, res) => {
   res.status(200).json({ message: 'Server is healthy' });
 });
@@ -61,7 +59,6 @@ app.get("/video-calling", protectRoute, (req, res) => {
   res.status(200).json({ message: 'this is the protected route' });
 });
 
-// Static files and SPA fallback (production only)
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = process.env.RENDER
     ? '/opt/render/project/src/frontend/dist'
@@ -76,7 +73,6 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
