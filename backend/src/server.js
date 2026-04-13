@@ -7,6 +7,8 @@ import { serve as Server } from 'inngest/express';
 import cors from 'cors';
 import { inngest, functions } from './lib/inngest.js';
 import { Webhook } from 'svix';
+import { clerkMiddleware } from '@clerk/express';
+import { protectRoute } from './middleware/protectRoute.js';
 
 const app = express();
 
@@ -41,6 +43,7 @@ app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), async 
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(clerkMiddleware());
 
 // Inngest
 app.use("/api/inngest", Server({ client: inngest, functions }));
@@ -54,8 +57,8 @@ app.get("/books", (req, res) => {
   res.status(200).json({ message: 'this is the book endpoint' });
 });
 
-app.get("/video-calling", (req, res) => {
-  res.status(200).json({ message: 'this is the video calling endpoint' });
+app.get("/video-calling", protectRoute, (req, res) => {
+  res.status(200).json({ message: 'this is the protected route' });
 });
 
 // Static files and SPA fallback (production only)
