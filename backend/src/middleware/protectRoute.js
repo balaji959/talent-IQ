@@ -1,15 +1,15 @@
 import { requireAuth } from '@clerk/express'
-import user from '../models/user.js';
+import User from '../models/user.js';
 
 export const protectRoute = [
     requireAuth(),
-    async (req, res, next) => {s
+    async (req, res, next) => {
         try {
             const clerkId = req.auth.userId;
             if (!clerkId) {
                 return res.status(401).json({ error: 'Unauthorized' });
             }
-            const user = await user.findOne({ clerkId });
+            const user = await User.findOne({ clerkId });
             if (!user) {
                 return res.status(401).json({ error: 'User not found' });
             }
