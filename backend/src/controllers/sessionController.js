@@ -1,5 +1,4 @@
-
-import { client, streamClient } from "../lib/stream.js";
+import { streamClient } from "../lib/stream.js";
 import Session from "../models/session.js";
 export async function  createSession(req, res) {
     try{
