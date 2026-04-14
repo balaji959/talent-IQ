@@ -21,6 +21,7 @@
   "homepage": "https://github.com/balaji959/talent-IQ#readme",
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",
+    "@stream-io/node-sdk": "^0.7.12",
     "svix": "^1.90.0"
   }
 }
