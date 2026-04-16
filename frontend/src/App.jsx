@@ -1,23 +1,44 @@
-import './App.css'
-import { SignIn, SignOutButton, UserButton, useUser } from '@clerk/react'
+import React from 'react';
+// CHANGE THESE:
+import { useUser } from '@clerk/clerk-react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
+// Import your pages
+import HomePage from './pages/homepage';
+
+import ProblemPage from './pages/problemPage'; 
+import { Toaster } from 'react-hot-toast';
 function App() {
-  const { isSignedIn } = useUser()
+  const { isSignedIn, isLoaded } = useUser();
+
+  // Prevents redirecting before Clerk knows if you're logged in
+  if (!isLoaded) return <div className="loading">Loading...</div>;
 
   return (
     <>
-      <h1>Welcome to Talent IQ</h1>
+    <Routes>
+      {/* Root Route: This fixes the blank page on localhost:5173 */}
+      <Route path="/" element={<HomePage />} />
+      <Route path="/home" element={<HomePage />} />
+      
+      
+      {/* Protected Route */}
+      <Route 
+        path="/problem" 
+        element={isSignedIn ? <ProblemPage /> : <Navigate to="/" />} 
+      />
 
-      {!isSignedIn && <SignIn />}
+      {/* Catch-all 404 */}
+      <Route path="*" element={<h1>404: Page Not Found</h1>} />
+    </Routes>
+<Toaster/>
 
-      {isSignedIn && (
-        <>
-          <UserButton />
-          <SignOutButton />
-        </>
-      )}
-    </>
-  )
+</>
+
+
+
+
+  );
 }
 
-export default App
+export default App;
