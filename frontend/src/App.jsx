@@ -8,18 +8,20 @@ import HomePage from './pages/homepage';
 
 import ProblemPage from './pages/problemPage'; 
 import { Toaster } from 'react-hot-toast';
+import DashboardPage from './pages/dashboardPaje';
 function App() {
   const { isSignedIn, isLoaded } = useUser();
 
   // Prevents redirecting before Clerk knows if you're logged in
-  if (!isLoaded) return <div className="loading">Loading...</div>;
+  if (!isLoaded) return null;
 
   return (
     <>
     <Routes>
       {/* Root Route: This fixes the blank page on localhost:5173 */}
-      <Route path="/" element={<HomePage />} />
-      <Route path="/home" element={<HomePage />} />
+      <Route path="/" element={!isSignedIn ? <HomePage /> : <Navigate to="/dashboard" />} />
+      <Route path="/dashboard" element={isSignedIn ? <DashboardPage /> : <Navigate to="/" />} />
+
       
       
       {/* Protected Route */}
