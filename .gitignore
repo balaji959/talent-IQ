@@ -2,9 +2,3 @@ node_modules/
 .env
 dist/
 *.log
-
-# Documentation build and Python environment
-.venv/
-site/
-docs/_build/
-__pycache__/
